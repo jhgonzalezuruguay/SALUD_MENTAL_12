@@ -147,6 +147,7 @@ if st.button("Obtener Diagnóstico"):
         st.error("Por favor, ingresa al menos un síntoma para obtener el diagnóstico.")
 
 # Sección 2: Seguimiento del Estado de Ánimo
+st.markdown("---")
 st.subheader("📊 Seguimiento del Estado de Ánimo")
 st.write("Registra tu estado de ánimo diario para llevar un seguimiento de cómo te sientes a lo largo del tiempo.")
 
