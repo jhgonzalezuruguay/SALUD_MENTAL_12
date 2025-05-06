@@ -77,7 +77,7 @@ def obtener_diagnostico(sintomas):
     return resultados
 
 # Título de la aplicación
-st.title("🧠 VITAL")
+st.title("🌈 VITAL")
 st.title("Asistente de Salud Mental con I.A.")
 st.title("Diagnóstico Preliminar de Salud Mental")
 st.markdown(
