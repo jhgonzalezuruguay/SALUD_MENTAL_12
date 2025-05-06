@@ -162,6 +162,7 @@ if st.button("Registrar Estado de Ánimo"):
     st.success(f"¡Estado de ánimo '{estado_animo}' registrado para la fecha {fecha_actual}!")
 
 # Sección 3: Historial de Estados de Ánimo
+st.markdown("---")
 datos = cargar_datos_estado_animo()
 st.subheader("📋 Historial de Estados de Ánimo")
 if not datos.empty:
