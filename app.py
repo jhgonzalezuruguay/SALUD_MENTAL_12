@@ -108,52 +108,11 @@ if prompt := st.sidebar.chat_input("Cuéntame cómo te sientes..."):
             st.markdown(response)
     st.session_state.messages.append({"role": "assistant", "content": response})
 
-# Sección de Registro de Estado de Ánimo
-st.subheader("📊 Seguimiento del Estado de Ánimo")
-st.write("Registra tu estado de ánimo diario para llevar un seguimiento de cómo te sientes a lo largo del tiempo.")
-
-# Formulario para registrar estado de ánimo
-estado_animo = st.selectbox(
-    "¿Cómo te sientes hoy?",
-    ["Feliz 😀", "Triste 😢", "Ansioso 😰", "Relajado 😌", "Enojado 😡"]
-)
-
-if st.button("Registrar Estado de Ánimo"):
-    fecha_actual = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    guardar_estado_animo(fecha_actual, estado_animo)
-    st.success(f"¡Estado de ánimo '{estado_animo}' registrado para la fecha {fecha_actual}!")
-
-# Mostrar historial de estados de ánimo
-datos = cargar_datos_estado_animo()
-st.subheader("📋 Historial de Estados de Ánimo")
-if not datos.empty:
-    st.write(datos)
-else:
-    st.write("No hay datos registrados aún.")
-
-# Generar gráficos si hay datos disponibles
-if not datos.empty:
-    datos["Fecha"] = pd.to_datetime(datos["Fecha"])
-    st.subheader("📈 Frecuencia de Estados de Ánimo")
-    resumen = datos["Estado de Ánimo"].value_counts()
-    fig, ax = plt.subplots()
-    ax.bar(resumen.index, resumen.values, color="skyblue")
-    ax.set_title("Frecuencia de Estados de Ánimo")
-    ax.set_xlabel("Estado de Ánimo")
-    ax.set_ylabel("Frecuencia")
-    st.pyplot(fig)
-
-    st.subheader("📊 Tendencia Temporal de Estados de Ánimo")
-    fig, ax = plt.subplots()
-    datos.groupby("Fecha").size().plot(ax=ax, kind="line", marker="o", color="green")
-    ax.set_title("Tendencia de Estados de Ánimo a lo Largo del Tiempo")
-    ax.set_xlabel("Fecha")
-    ax.set_ylabel("Cantidad de Registros")
-    st.pyplot(fig)
-
-# Diagnóstico basado en síntomas
+# Sección 1: Diagnóstico basado en síntomas
 st.subheader("📋 Ingrese sus síntomas")
+st.write("Por favor, ingresa tus síntomas separados por comas:")
 sintomas_usuario = st.text_input("Describe tus síntomas (por ejemplo: tristeza, insomnio, fatiga)")
+
 if st.button("Obtener Diagnóstico"):
     if sintomas_usuario:
         diagnostico = obtener_diagnostico(sintomas_usuario)
@@ -168,6 +127,47 @@ if st.button("Obtener Diagnóstico"):
             st.warning("No se identificaron trastornos específicos basados en los síntomas proporcionados. Por favor, consulta con un profesional.")
     else:
         st.error("Por favor, ingresa al menos un síntoma para obtener el diagnóstico.")
+
+# Sección 2: Seguimiento del Estado de Ánimo
+st.subheader("📊 Seguimiento del Estado de Ánimo")
+st.write("Registra tu estado de ánimo diario para llevar un seguimiento de cómo te sientes a lo largo del tiempo.")
+
+estado_animo = st.selectbox(
+    "¿Cómo te sientes hoy?",
+    ["Feliz 😀", "Triste 😢", "Ansioso 😰", "Relajado 😌", "Enojado 😡"]
+)
+
+if st.button("Registrar Estado de Ánimo"):
+    fecha_actual = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    guardar_estado_animo(fecha_actual, estado_animo)
+    st.success(f"¡Estado de ánimo '{estado_animo}' registrado para la fecha {fecha_actual}!")
+
+# Sección 3: Historial de Estados de Ánimo
+datos = cargar_datos_estado_animo()
+st.subheader("📋 Historial de Estados de Ánimo")
+if not datos.empty:
+    st.write(datos)
+else:
+    st.write("No hay datos registrados aún.")
+
+# Sección 4: Generación de gráficos
+if not datos.empty:
+    datos["Fecha"] = pd.to_datetime(datos["Fecha"])
+    st.subheader("📊 Tendencia Temporal de Estados de Ánimo")
+    resumen = datos["Estado de Ánimo"].value_counts()
+    fig, ax = plt.subplots()
+    ax.bar(resumen.index, resumen.values, color="skyblue")
+    ax.set_title("Frecuencia de Estados de Ánimo")
+    ax.set_xlabel("Estado de Ánimo")
+    ax.set_ylabel("Frecuencia")
+    st.pyplot(fig)
+
+    fig, ax = plt.subplots()
+    datos.groupby("Fecha").size().plot(ax=ax, kind="line", marker="o", color="green")
+    ax.set_title("Tendencia de Estados de Ánimo a lo Largo del Tiempo")
+    ax.set_xlabel("Fecha")
+    ax.set_ylabel("Cantidad de Registros")
+    st.pyplot(fig)
 
 # Botones de registro, agendar cita y WhatsApp
 st.markdown("---")
