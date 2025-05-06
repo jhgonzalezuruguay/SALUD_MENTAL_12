@@ -110,7 +110,7 @@ if prompt := st.sidebar.chat_input("Cuéntame cómo te sientes..."):
     st.session_state.messages.append({"role": "assistant", "content": response})
 
 # Sección 1: Diagnóstico basado en síntomas
-st.subheader("📋 Ingrese sus síntomas")
+st.subheader("📋 Ingresa tus síntomas")
 st.write("Por favor, ingresa tus síntomas separados por comas:")
 sintomas_usuario = st.text_input("Describe tus síntomas (por ejemplo: tristeza, insomnio, fatiga)")
 
