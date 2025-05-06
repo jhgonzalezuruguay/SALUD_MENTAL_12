@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Diagnóstico de Salud Mental</title>
+</head>
+<body>
+    <h1>Diagnóstico de Salud Mental</h1>
+    <form id="diagnostico-form">
+        <label for="symptoms">Selecciona tus síntomas:</label><br>
+        <select id="symptoms" name="symptoms" multiple>
+            <option value="cansancio">Cansancio</option>
+            <option value="ansiedad">Ansiedad</option>
+            <option value="irritabilidad">Irritabilidad</option>
+            <option value="tristeza">Tristeza</option>
+            <!-- Agrega más opciones según los síntomas disponibles -->
+        </select><br><br>
+        <button type="button" onclick="submitForm()">Obtener Diagnóstico</button>
+    </form>
+    <div id="result"></div>
+
+    <script>
+        function submitForm() {
+            const symptoms = Array.from(document.getElementById('symptoms').selectedOptions).map(option => option.value);
+            fetch('/diagnostico', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ symptoms: symptoms })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('result').innerText = `Diagnóstico: ${data.diagnostico}\nDescripción: ${data.descripcion}\nConfianza: ${data.confianza}`;
+            })
+            .catch(error => {
+                document.getElementById('result').innerText = `Error: ${error}`;
+            });
+        }
+    </script>
+</body>
+</html>
