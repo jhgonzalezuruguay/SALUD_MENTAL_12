@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
+from matplotlib.dates import DateFormatter
 from datetime import datetime
 import os
 
@@ -169,33 +170,10 @@ if not datos.empty:
     ax.set_ylabel("Frecuencia")
     st.pyplot(fig)
 
+    # Configuración del formateador de fechas
+    date_form = DateFormatter("%Y-%m-%d")  # Año-Mes-Día
+
+    # Gráfico de tendencia temporal
     fig, ax = plt.subplots()
     datos.groupby("Fecha_Dia").size().plot(ax=ax, kind="line", marker="o", color="green")
-    ax.set_title("Tendencia de Estados de Ánimo a lo Largo del Tiempo")
-    ax.set_xlabel("Fecha")
-    ax.set_ylabel("Cantidad de Registros")
-    plt.xticks(rotation=45)  # Rotar etiquetas
-    st.pyplot(fig)
-
-# Botones de registro, agendar cita y WhatsApp
-st.markdown("---")
-st.subheader("📅 Agendar una consulta con un profesional")
-booking_url = "https://forms.gle/MQwofoD14ELSp4Ye7"
-st.markdown(f'<a href="{booking_url}" target="_blank"><button style="background-color: #4CAF50; color: white; padding: 10px 24px; border: none; border-radius: 4px; cursor: pointer;">AGENDAR CITA</button></a>', unsafe_allow_html=True)
-
-st.markdown("---")
-st.subheader("📋 Registro de Usuario")
-registro_url = "https://forms.gle/ZsM2xrWyUUU9ak6z7"
-st.markdown(f'<a href="{registro_url}" target="_blank"><button style="background-color: #4CAF50; color: white; padding: 10px 24px; border: none; border-radius: 4px; cursor: pointer;">REGISTRARSE</button></a>', unsafe_allow_html=True)
-
-st.markdown("---")
-st.subheader("💬 Enviar Mensaje por WhatsApp")
-whatsapp_url = "https://wa.me/59897304859?text=Hola,%20necesito%20ayuda%20con%20mi%20salud%20mental."
-st.markdown(f'<a href="{whatsapp_url}" target="_blank"><button style="background-color: #25D366; color: white; padding: 10px 24px; border: none; border-radius: 4px; cursor: pointer;">Enviar Mensaje</button></a>', unsafe_allow_html=True)
-
-# Footer
-st.write("VITAL LE AGRADECE POR CONFIAR Y USAR NUESTRO SERVICIO!! ❤️")
-st.subheader("⚠️ Por consultas, y/o para participar y brindar tu servicio como profesional de la salud en nuestra app, comunicarse con:")
-st.write("Mag. José González Gómez")
-st.write("Correo: josehumbertogonzalezgomez@gmail.com")
-st.write("**Nota:** Esta herramienta proporciona diagnósticos preliminares basados en los síntomas ingresados. No reemplaza una consulta profesional.")
+    ax.set_title("Tendencia de Estados de Ánimo a lo Largo
