@@ -214,7 +214,9 @@ st.markdown(f'<a href="{booking_url}" target="_blank"><button style="background-
 st.markdown("---")
 st.subheader("📋 Registro de Usuario")
 registro_url = "https://forms.gle/ZsM2xrWyUUU9ak6z7"
-st.markdown(f'[**Registrarse**]({registro_url})', unsafe_allow_html=True)
+#st.markdown(f'[**Registrarse**]({registro_url})', unsafe_allow_html=True)
+st.markdown(f'<a href="{registro_url}" target="_blank"><button style="background-color: #4CAF50; color: white; padding: 10px 24px; border: none; border-radius: 4px; cursor: pointer;">REGISTRARSE</button></a>', unsafe_allow_html=True)
+
 
 st.markdown("---")
 st.subheader("💬 Enviar Mensaje por WhatsApp")
