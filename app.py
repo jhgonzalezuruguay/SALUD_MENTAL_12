@@ -143,7 +143,7 @@ estado_animo = st.selectbox(
 )
 
 if st.button("Registrar Estado de Ánimo"):
-    fecha_actual = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    fecha_actual = datetime.now().strftime("%Y-%m-%d")
     guardar_estado_animo(fecha_actual, estado_animo)
     st.success(f"¡Estado de ánimo '{estado_animo}' registrado para la fecha {fecha_actual}!")
 
@@ -158,8 +158,7 @@ else:
 
 # Sección 4: Generación de gráficos
 if not datos.empty:
-    datos["Fecha"] = pd.to_datetime(datos["Fecha"])
-    datos["Fecha_Dia"] = datos["Fecha"].dt.date  # Extraer solo la fecha (sin hora)
+    datos["Fecha"] = pd.to_datetime(datos["Fecha"]).dt.date  # Asegurarse de que solo se use la fecha, sin hora.
 
     st.subheader("📊 Tendencia Temporal de Estados de Ánimo")
     resumen = datos["Estado de Ánimo"].value_counts()
@@ -172,7 +171,7 @@ if not datos.empty:
 
     # Configuración del gráfico de tendencia temporal
     fig, ax = plt.subplots()
-    datos.groupby("Fecha_Dia").size().plot(ax=ax, kind="line", marker="o", color="green")
+    datos.groupby("Fecha").size().plot(ax=ax, kind="line", marker="o", color="green")
     ax.set_title("Tendencia de Estados de Ánimo a lo Largo del Tiempo")
     ax.set_xlabel("Fecha")
     ax.set_ylabel("Cantidad de Registros")
@@ -205,4 +204,3 @@ st.subheader("⚠️ Por consultas, y/o para participar como profesional de la s
 st.write("Mag. José González Gómez")
 st.write("Correo: josehumbertogonzalezgomez@gmail.com")
 st.write("**Nota:** Esta herramienta proporciona diagnósticos preliminares basados en los síntomas ingresados. No reemplaza una consulta profesional.")
-
