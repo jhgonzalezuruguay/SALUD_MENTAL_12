@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
+from matplotlib.dates import DateFormatter
 from datetime import datetime
 import os
 
@@ -111,25 +112,10 @@ if prompt := st.sidebar.chat_input("Cuéntame cómo te sientes..."):
 
 # Sección 1: Diagnóstico basado en síntomas
 st.subheader("📋 Ingresa tus síntomas")
-#st.write("Por favor, ingresa tus síntomas separados por comas:")
-
 st.write("Ingresa tus síntomas separados por comas y recibe información y enlaces a posibles trastornos relacionados.")
-st.write("Cuanta mas información ingreses sobre como te sientes, ayuda a mejorar el posible diagnóstico")
+st.write("Cuanta más información ingreses sobre cómo te sientes, ayuda a mejorar el posible diagnóstico")
 
 sintomas_usuario = st.text_input("Describe tus síntomas (por ejemplo: tristeza, insomnio, fatiga)")
-# Botón para procesar
-st.markdown(
-    """
-    <style>
-    .stButton button {
-        background-color: #ADD8E6;
-        color: black;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-
 
 if st.button("Obtener Diagnóstico"):
     if sintomas_usuario:
@@ -173,6 +159,8 @@ else:
 # Sección 4: Generación de gráficos
 if not datos.empty:
     datos["Fecha"] = pd.to_datetime(datos["Fecha"])
+    datos["Fecha_Dia"] = datos["Fecha"].dt.date  # Extraer solo la fecha (sin hora)
+
     st.subheader("📊 Tendencia Temporal de Estados de Ánimo")
     resumen = datos["Estado de Ánimo"].value_counts()
     fig, ax = plt.subplots()
@@ -182,34 +170,38 @@ if not datos.empty:
     ax.set_ylabel("Frecuencia")
     st.pyplot(fig)
 
+    # Configuración del gráfico de tendencia temporal
     fig, ax = plt.subplots()
-    datos.groupby("Fecha").size().plot(ax=ax, kind="line", marker="o", color="green")
+    datos.groupby("Fecha_Dia").size().plot(ax=ax, kind="line", marker="o", color="green")
     ax.set_title("Tendencia de Estados de Ánimo a lo Largo del Tiempo")
     ax.set_xlabel("Fecha")
     ax.set_ylabel("Cantidad de Registros")
+    ax.xaxis.set_major_formatter(DateFormatter("%Y-%m-%d"))  # Mostrar fechas correctamente
+    plt.xticks(rotation=45)
     st.pyplot(fig)
 
-# Botones de registro, agendar cita y WhatsApp
+# Sección 5: Opciones adicionales (Agendar cita, Registro, WhatsApp)
 st.markdown("---")
 st.subheader("📅 Agendar una consulta con un profesional")
 st.write("Si deseas hablar con un profesional de salud mental, agenda una cita a continuación.")
 booking_url = "https://forms.gle/MQwofoD14ELSp4Ye7"
-st.markdown(f'<a href="{booking_url}" target="_blank"><button style="background-color: #4CAF50; color: white; padding: 10px 24px; border: none; border-radius: 4px; cursor: pointer;">AGENDAR CITA</button></a>', unsafe_allow_html=True)
+st.markdown(f'[**Agendar Cita**]({booking_url})', unsafe_allow_html=True)
 
 st.markdown("---")
 st.subheader("📋 Registro de Usuario")
 registro_url = "https://forms.gle/ZsM2xrWyUUU9ak6z7"
-st.markdown(f'<a href="{registro_url}" target="_blank"><button style="background-color: #4CAF50; color: white; padding: 10px 24px; border: none; border-radius: 4px; cursor: pointer;">REGISTRARSE</button></a>', unsafe_allow_html=True)
+st.markdown(f'[**Registrarse**]({registro_url})', unsafe_allow_html=True)
 
 st.markdown("---")
 st.subheader("💬 Enviar Mensaje por WhatsApp")
 st.write("Si deseas enviar un mensaje por WhatsApp, haz clic en el siguiente botón:")
 whatsapp_url = "https://wa.me/59897304859?text=Hola,%20necesito%20ayuda%20con%20mi%20salud%20mental."
-st.markdown(f'<a href="{whatsapp_url}" target="_blank"><button style="background-color: #25D366; color: white; padding: 10px 24px; border: none; border-radius: 4px; cursor: pointer;">Enviar Mensaje</button></a>', unsafe_allow_html=True)
+st.markdown(f'[**Enviar Mensaje por WhatsApp**]({whatsapp_url})', unsafe_allow_html=True)
 
 # Footer
-st.write("VITAL LE AGRADECE POR CONFIAR Y USAR NUESTRO SERVICIO!! ❤️")
-st.subheader("⚠️ Por consultas, y/o para participar y brindar tu servicio como profesional de la salud en nuestra app, comunicarse con:")
+st.markdown("---")
+st.write("VITAL LE AGRADECE POR CONFIAR Y USAR NUESTRO SERVICIO ❤️")
+st.subheader("⚠️ Por consultas, y/o para participar como profesional de la salud, contactarse con:")
 st.write("Mag. José González Gómez")
 st.write("Correo: josehumbertogonzalezgomez@gmail.com")
 st.write("**Nota:** Esta herramienta proporciona diagnósticos preliminares basados en los síntomas ingresados. No reemplaza una consulta profesional.")
