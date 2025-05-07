@@ -219,7 +219,7 @@ st.markdown(f'<a href="{booking_url}" target="_blank"><button style="background-
 # Footer
 st.markdown("---")
 st.write("VITAL LE AGRADECE POR CONFIAR Y USAR NUESTRO SERVICIO ❤️")
-st.subheader("⚠️ Por consultas, y/o para participar como profesional de la salud, contactarse con:")
+st.subheader("⚠️  Por consultas, y/o para participar y brindar tu servicio como profesional de la salud en nuestra app, comunicarse con:")
 st.write("Mag. José González Gómez")
 st.write("Correo: josehumbertogonzalezgomez@gmail.com")
 st.write("**Nota:** Esta herramienta proporciona diagnósticos preliminares basados en los síntomas ingresados. No reemplaza una consulta profesional.")
