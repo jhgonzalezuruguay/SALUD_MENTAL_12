@@ -214,8 +214,8 @@ st.markdown("---")
 st.subheader("💬 Enviar Mensaje por WhatsApp")
 st.write("Si deseas enviar un mensaje por WhatsApp, haz clic en el siguiente botón:")
 whatsapp_url = "https://wa.me/59897304859?text=Hola,%20necesito%20ayuda%20con%20mi%20salud%20mental."
-st.markdown(f'[**Enviar Mensaje por WhatsApp**]({whatsapp_url})', unsafe_allow_html=True)
-
+#st.markdown(f'[**Enviar Mensaje por WhatsApp**]({whatsapp_url})', unsafe_allow_html=True)
+st.markdown(f'<a href="{booking_url}" target="_blank"><button style="background-color: #4CAF50; color: white; padding: 10px 24px; border: none; border-radius: 4px; cursor: pointer;">AGENDAR CITA</button></a>', unsafe_allow_html=True)
 # Footer
 st.markdown("---")
 st.write("VITAL LE AGRADECE POR CONFIAR Y USAR NUESTRO SERVICIO ❤️")
