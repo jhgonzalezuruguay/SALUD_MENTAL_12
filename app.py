@@ -111,25 +111,10 @@ if prompt := st.sidebar.chat_input("Cuéntame cómo te sientes..."):
 
 # Sección 1: Diagnóstico basado en síntomas
 st.subheader("📋 Ingresa tus síntomas")
-#st.write("Por favor, ingresa tus síntomas separados por comas:")
-
 st.write("Ingresa tus síntomas separados por comas y recibe información y enlaces a posibles trastornos relacionados.")
 st.write("Cuanta mas información ingreses sobre como te sientes, ayuda a mejorar el posible diagnóstico")
 
 sintomas_usuario = st.text_input("Describe tus síntomas (por ejemplo: tristeza, insomnio, fatiga)")
-# Botón para procesar
-st.markdown(
-    """
-    <style>
-    .stButton button {
-        background-color: #ADD8E6;
-        color: black;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-
 
 if st.button("Obtener Diagnóstico"):
     if sintomas_usuario:
@@ -173,6 +158,8 @@ else:
 # Sección 4: Generación de gráficos
 if not datos.empty:
     datos["Fecha"] = pd.to_datetime(datos["Fecha"])
+    datos["Fecha_Dia"] = datos["Fecha"].dt.date  # Extraer solo la fecha (sin hora)
+
     st.subheader("📊 Tendencia Temporal de Estados de Ánimo")
     resumen = datos["Estado de Ánimo"].value_counts()
     fig, ax = plt.subplots()
@@ -183,16 +170,16 @@ if not datos.empty:
     st.pyplot(fig)
 
     fig, ax = plt.subplots()
-    datos.groupby("Fecha").size().plot(ax=ax, kind="line", marker="o", color="green")
+    datos.groupby("Fecha_Dia").size().plot(ax=ax, kind="line", marker="o", color="green")
     ax.set_title("Tendencia de Estados de Ánimo a lo Largo del Tiempo")
     ax.set_xlabel("Fecha")
     ax.set_ylabel("Cantidad de Registros")
+    plt.xticks(rotation=45)  # Rotar etiquetas
     st.pyplot(fig)
 
 # Botones de registro, agendar cita y WhatsApp
 st.markdown("---")
 st.subheader("📅 Agendar una consulta con un profesional")
-st.write("Si deseas hablar con un profesional de salud mental, agenda una cita a continuación.")
 booking_url = "https://forms.gle/MQwofoD14ELSp4Ye7"
 st.markdown(f'<a href="{booking_url}" target="_blank"><button style="background-color: #4CAF50; color: white; padding: 10px 24px; border: none; border-radius: 4px; cursor: pointer;">AGENDAR CITA</button></a>', unsafe_allow_html=True)
 
@@ -203,7 +190,6 @@ st.markdown(f'<a href="{registro_url}" target="_blank"><button style="background
 
 st.markdown("---")
 st.subheader("💬 Enviar Mensaje por WhatsApp")
-st.write("Si deseas enviar un mensaje por WhatsApp, haz clic en el siguiente botón:")
 whatsapp_url = "https://wa.me/59897304859?text=Hola,%20necesito%20ayuda%20con%20mi%20salud%20mental."
 st.markdown(f'<a href="{whatsapp_url}" target="_blank"><button style="background-color: #25D366; color: white; padding: 10px 24px; border: none; border-radius: 4px; cursor: pointer;">Enviar Mensaje</button></a>', unsafe_allow_html=True)
 
