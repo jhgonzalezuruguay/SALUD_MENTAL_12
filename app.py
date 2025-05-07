@@ -117,6 +117,19 @@ st.write("Cuanta más información ingreses sobre cómo te sientes, ayuda a mejo
 
 sintomas_usuario = st.text_input("Describe tus síntomas (por ejemplo: tristeza, insomnio, fatiga)")
 
+# Botón para procesar
+st.markdown(
+    """
+    <style>
+    .stButton button {
+        background-color: #ADD8E6;
+        color: black;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 if st.button("Obtener Diagnóstico"):
     if sintomas_usuario:
         diagnostico = obtener_diagnostico(sintomas_usuario)
