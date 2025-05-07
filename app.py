@@ -139,7 +139,13 @@ st.write("Registra tu estado de ánimo cada vez que sientas un cambio del mismo 
 
 estado_animo = st.selectbox(
     "¿Cómo te sientes hoy?",
-    ["Feliz 😀", "Triste 😢", "Ansioso 😰", "Relajado 😌", "Enojado 😡"]
+    [
+        "Feliz 😀", "Triste 😢", "Ansioso 😰", "Relajado 😌", "Enojado 😡",
+        "Fiesta 🥳", "Enamorado 😍", "Cool 😎", "Asombrado 🤩", "Arcoíris 🌈",
+        "Neutral 😐", "Pensativo 🤔", "Tristeza leve 😔", "Miedo 😱",
+        "Agotado 😩", "Meditación 🧘", "Idea 💡", "Energía ⚡", "Confuso 🌪️",
+        "Corazón roto 💔"
+    ]
 )
 
 if st.button("Registrar Estado de Ánimo"):
