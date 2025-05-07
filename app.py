@@ -135,7 +135,7 @@ if st.button("Obtener Diagnóstico"):
 # Sección 2: Seguimiento del Estado de Ánimo
 st.markdown("---")
 st.subheader("📊 Seguimiento del Estado de Ánimo")
-st.write("Registra tu estado de ánimo cada vez que sientas un cambio del mismo o cuando lo creas necesario registrar, para así llevar un seguimiento de cómo te sientes a lo largo del tiempo.")
+st.write("Registra tu estado de ánimo cada vez que sientas un cambio del mismo o cuando consideres necesario registrarlo, para así llevar un seguimiento de cómo te sientes a lo largo del tiempo.")
 
 estado_animo = st.selectbox(
     "¿Cómo te sientes hoy?",
