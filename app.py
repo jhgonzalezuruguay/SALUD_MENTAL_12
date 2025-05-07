@@ -202,8 +202,14 @@ if not datos.empty:
 st.markdown("---")
 st.subheader("📅 Agendar una consulta con un profesional")
 st.write("Si deseas hablar con un profesional de salud mental, agenda una cita a continuación.")
-booking_url = "https://forms.gle/MQwofoD14ELSp4Ye7"
-st.markdown(f'[**Agendar Cita**]({booking_url})', unsafe_allow_html=True)
+#booking_url = "https://forms.gle/MQwofoD14ELSp4Ye7"
+#st.markdown(f'[**Agendar Cita**]({booking_url})', unsafe_allow_html=True)
+
+# Enlace a Google Forms o WhatsApp (elige uno)
+booking_url = "https://forms.gle/MQwofoD14ELSp4Ye7"  # Enlace de tu formulario de citas
+st.markdown(f'<a href="{booking_url}" target="_blank"><button style="background-color: #4CAF50; color: white; padding: 10px 24px; border: none; border-radius: 4px; cursor: pointer;">AGENDAR CITA</button></a>', unsafe_allow_html=True)
+
+
 
 st.markdown("---")
 st.subheader("📋 Registro de Usuario")
