@@ -189,16 +189,35 @@ if not datos.empty:
     st.pyplot(fig)
 
     # Configuración del gráfico de tendencia temporal (191 a 199)
-    fig, ax = plt.subplots()
-    datos.groupby("Fecha").size().plot(ax=ax, kind="line", marker="o", color="green")
-    ax.set_title("Tendencia de Estados de Ánimo a lo Largo del Tiempo")
-    ax.set_xlabel("Fecha")
-    ax.set_ylabel("Cantidad de Registros")
-    ax.xaxis.set_major_formatter(DateFormatter("%Y-%m-%d"))  # Mostrar fechas correctamente
-    plt.xticks(rotation=45)
-    st.pyplot(fig)
+    #fig, ax = plt.subplots()
+    #datos.groupby("Fecha").size().plot(ax=ax, kind="line", marker="o", color="green")
+    #ax.set_title("Tendencia de Estados de Ánimo a lo Largo del Tiempo")
+    #ax.set_xlabel("Fecha")
+    #ax.set_ylabel("Cantidad de Registros")
+    #ax.xaxis.set_major_formatter(DateFormatter("%Y-%m-%d"))  # Mostrar fechas correctamente
+    #plt.xticks(rotation=45)
+    #st.pyplot(fig)
 
+# Configuración del gráfico de tendencia temporal actualizado
+fig, ax = plt.subplots()
 
+# Asegurarse de que la columna "Fecha" esté en formato datetime y agregar fechas faltantes
+datos["Fecha"] = pd.to_datetime(datos["Fecha"])
+rango_fechas = pd.date_range(start=datos["Fecha"].min(), end=datetime.now().date())
+datos_completos = datos.set_index("Fecha").reindex(rango_fechas, fill_value=0).reset_index()
+datos_completos.rename(columns={"index": "Fecha"}, inplace=True)
+
+# Agrupar por fecha y contar los registros diarios
+conteo_diario = datos.groupby("Fecha").size().reindex(rango_fechas, fill_value=0)
+
+# Graficar la tendencia
+conteo_diario.plot(ax=ax, kind="line", marker="o", color="green")
+ax.set_title("Tendencia de Estados de Ánimo a lo Largo del Tiempo")
+ax.set_xlabel("Fecha")
+ax.set_ylabel("Cantidad de Registros")
+ax.xaxis.set_major_formatter(DateFormatter("%Y-%m-%d"))  # Mostrar fechas correctamente
+plt.xticks(rotation=45)
+st.pyplot(fig)
 
 # Sección 5: Opciones adicionales (Agendar cita, Registro, WhatsApp)
 st.markdown("---")
