@@ -189,15 +189,16 @@ if not datos.empty:
     st.pyplot(fig)
 
     # Configuración del gráfico de tendencia temporal (191 a 199)
-    fig, ax = plt.subplots()
-    datos.groupby("Fecha").size().plot(ax=ax, kind="line", marker="o", color="green")
-    ax.set_title("Tendencia de Estados de Ánimo a lo Largo del Tiempo")
-    ax.set_xlabel("Fecha")
-    ax.set_ylabel("Cantidad de Registros")
-    ax.xaxis.set_major_formatter(DateFormatter("%Y-%m-%d"))  # Mostrar fechas correctamente
-    plt.xticks(rotation=45)
-    st.pyplot(fig)
-#####comienza en la linea 200
+    #fig, ax = plt.subplots()
+    #datos.groupby("Fecha").size().plot(ax=ax, kind="line", marker="o", color="green")
+    #ax.set_title("Tendencia de Estados de Ánimo a lo Largo del Tiempo")
+    #ax.set_xlabel("Fecha")
+    #ax.set_ylabel("Cantidad de Registros")
+    #ax.xaxis.set_major_formatter(DateFormatter("%Y-%m-%d"))  # Mostrar fechas correctamente
+    #plt.xticks(rotation=45)
+    #st.pyplot(fig)
+
+#Nueva grafica
 #import matplotlib.pyplot as plt
 #import pandas as pd
 #import streamlit as st
