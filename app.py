@@ -198,13 +198,17 @@ if not datos.empty:
     #plt.xticks(rotation=45)
     #st.pyplot(fig)
 
-# Configuración del gráfico de tendencia temporal (191 a 199)
+# Configuración del gráfico de tendencia temporal
 fig, ax = plt.subplots()
 
-# Filtrar los datos para incluir solo registros desde la fecha actual
-fecha_actual = datetime(2025, 5, 8).date()  # Fecha actual fija para este caso
-datos_filtrados = datos[datos["Fecha"] >= fecha_actual]
+# Obtener la fecha actual
+fecha_actual = datetime.now().date()  # Fecha actual dinámica
 
+# Agregar un punto inicial en (0, 0) con la fecha actual
+datos_filtrados = datos[datos["Fecha"] >= fecha_actual]
+datos_filtrados = pd.concat([pd.DataFrame({"Fecha": [fecha_actual], "Estado de Ánimo": [0]}), datos_filtrados], ignore_index=True)
+
+# Graficar los datos filtrados
 datos_filtrados.groupby("Fecha").size().plot(ax=ax, kind="line", marker="o", color="green")
 ax.set_title("Tendencia de Estados de Ánimo a lo Largo del Tiempo")
 ax.set_xlabel("Fecha")
@@ -212,7 +216,6 @@ ax.set_ylabel("Cantidad de Registros")
 ax.xaxis.set_major_formatter(DateFormatter("%Y-%m-%d"))  # Mostrar fechas correctamente
 plt.xticks(rotation=45)
 st.pyplot(fig)
-
 
 # Sección 5: Opciones adicionales (Agendar cita, Registro, WhatsApp)
 st.markdown("---")
