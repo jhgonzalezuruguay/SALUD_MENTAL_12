@@ -188,7 +188,7 @@ if not datos.empty:
     ax.set_ylabel("Frecuencia")
     st.pyplot(fig)
 
-    # Configuración del gráfico de tendencia temporal
+    # Configuración del gráfico de tendencia temporal (191 a 199)
     fig, ax = plt.subplots()
     datos.groupby("Fecha").size().plot(ax=ax, kind="line", marker="o", color="green")
     ax.set_title("Tendencia de Estados de Ánimo a lo Largo del Tiempo")
@@ -197,6 +197,36 @@ if not datos.empty:
     ax.xaxis.set_major_formatter(DateFormatter("%Y-%m-%d"))  # Mostrar fechas correctamente
     plt.xticks(rotation=45)
     st.pyplot(fig)
+#####comienza en la linea 200
+#import matplotlib.pyplot as plt
+#import pandas as pd
+#import streamlit as st
+#from matplotlib.dates import DateFormatter
+
+# Asegurar que "Fecha" esté en formato datetime
+datos["Fecha"] = pd.to_datetime(datos["Fecha"])
+
+# Agrupar por fecha y estado de ánimo, contando ocurrencias
+datos_agrupados = datos.groupby(["Fecha", "Estado"]).size().reset_index(name="Cantidad")
+
+# Configurar el gráfico
+fig, ax = plt.subplots()
+
+# Graficar cada estado de ánimo como una línea separada
+for estado in datos_agrupados["Estado"].unique():
+    subset = datos_agrupados[datos_agrupados["Estado"] == estado]
+    ax.plot(subset["Fecha"], subset["Cantidad"], marker="o", linestyle="-", label=estado)
+
+# Etiquetas y formato
+ax.set_title("Tendencia de Estados de Ánimo a lo Largo del Tiempo")
+ax.set_xlabel("Fecha")
+ax.set_ylabel("Cantidad de Registros")
+ax.xaxis.set_major_formatter(DateFormatter("%Y-%m-%d"))
+plt.xticks(rotation=45)
+ax.legend(title="Estados de Ánimo")  # Mostrar leyenda con categorías
+
+# Mostrar en Streamlit
+st.pyplot(fig)
 
 # Sección 5: Opciones adicionales (Agendar cita, Registro, WhatsApp)
 st.markdown("---")
