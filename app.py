@@ -189,14 +189,29 @@ if not datos.empty:
     st.pyplot(fig)
 
     # Configuración del gráfico de tendencia temporal (191 a 199)
-    fig, ax = plt.subplots()
-    datos.groupby("Fecha").size().plot(ax=ax, kind="line", marker="o", color="green")
-    ax.set_title("Tendencia de Estados de Ánimo a lo Largo del Tiempo")
-    ax.set_xlabel("Fecha")
-    ax.set_ylabel("Cantidad de Registros")
-    ax.xaxis.set_major_formatter(DateFormatter("%Y-%m-%d"))  # Mostrar fechas correctamente
-    plt.xticks(rotation=45)
-    st.pyplot(fig)
+    #fig, ax = plt.subplots()
+    #datos.groupby("Fecha").size().plot(ax=ax, kind="line", marker="o", color="green")
+    #ax.set_title("Tendencia de Estados de Ánimo a lo Largo del Tiempo")
+    #ax.set_xlabel("Fecha")
+    #ax.set_ylabel("Cantidad de Registros")
+    #ax.xaxis.set_major_formatter(DateFormatter("%Y-%m-%d"))  # Mostrar fechas correctamente
+    #plt.xticks(rotation=45)
+    #st.pyplot(fig)
+
+# Configuración del gráfico de tendencia temporal (191 a 199)
+fig, ax = plt.subplots()
+
+# Filtrar los datos para incluir solo registros desde la fecha actual
+fecha_actual = datetime(2025, 5, 8).date()  # Fecha actual fija para este caso
+datos_filtrados = datos[datos["Fecha"] >= fecha_actual]
+
+datos_filtrados.groupby("Fecha").size().plot(ax=ax, kind="line", marker="o", color="green")
+ax.set_title("Tendencia de Estados de Ánimo a lo Largo del Tiempo")
+ax.set_xlabel("Fecha")
+ax.set_ylabel("Cantidad de Registros")
+ax.xaxis.set_major_formatter(DateFormatter("%Y-%m-%d"))  # Mostrar fechas correctamente
+plt.xticks(rotation=45)
+st.pyplot(fig)
 
 
 # Sección 5: Opciones adicionales (Agendar cita, Registro, WhatsApp)
