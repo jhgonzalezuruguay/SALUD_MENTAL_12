@@ -5,6 +5,17 @@ from matplotlib.dates import DateFormatter
 from datetime import datetime
 import os
 
+#import streamlit as st
+
+# Retrieve the token from Streamlit secrets
+github_token = st.secrets["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"]
+
+# Construct the repository URL
+repo_url = f"https://{github_token}@github.com/jhgonzalezuruguay/SALUD_MENTAL_2.git"
+
+# Use the URL securely in your application
+print(f"Repository URL: {repo_url[:50]}... (truncated for security)")
+
 # Archivo CSV para almacenar los datos del estado de ánimo
 CSV_FILE = "historial_estado_animo.csv"
 
