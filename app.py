@@ -199,26 +199,26 @@ if not datos.empty:
     #st.pyplot(fig)
 
 # Configuración del gráfico de tendencia temporal
-fig, ax = plt.subplots()
+#fig, ax = plt.subplots()
 
 # Obtener la fecha actual
-fecha_actual = datetime.now().date()  # Fecha actual dinámica
+#fecha_actual = datetime.now().date()  # Fecha actual dinámica
 
 # Filtrar los datos desde la fecha actual
-datos_filtrados = datos[datos["Fecha"] >= fecha_actual]
+#datos_filtrados = datos[datos["Fecha"] >= fecha_actual]
 
 # Verificar si hay datos después de filtrar
-if datos_filtrados.empty:
-    st.warning("No hay datos registrados después de la fecha actual.")
-else:
+#if datos_filtrados.empty:
+    #st.warning("No hay datos registrados después de la fecha actual.")
+#else:
     # Graficar los datos filtrados
-    datos_filtrados.groupby("Fecha").size().plot(ax=ax, kind="line", marker="o", color="green")
-    ax.set_title("Tendencia de Estados de Ánimo a lo Largo del Tiempo")
-    ax.set_xlabel("Fecha")
-    ax.set_ylabel("Cantidad de Registros")
-    ax.xaxis.set_major_formatter(DateFormatter("%Y-%m-%d"))  # Mostrar fechas correctamente
-    plt.xticks(rotation=45)
-    st.pyplot(fig)
+    #datos_filtrados.groupby("Fecha").size().plot(ax=ax, kind="line", marker="o", color="green")
+    #ax.set_title("Tendencia de Estados de Ánimo a lo Largo del Tiempo")
+    #ax.set_xlabel("Fecha")
+    #ax.set_ylabel("Cantidad de Registros")
+    #ax.xaxis.set_major_formatter(DateFormatter("%Y-%m-%d"))  # Mostrar fechas correctamente
+    #plt.xticks(rotation=45)
+    #st.pyplot(fig)
 
 # Sección 5: Opciones adicionales (Agendar cita, Registro, WhatsApp)
 st.markdown("---")
