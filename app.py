@@ -1,18 +1,30 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
-from matplotlib.dates import DateFormatter
 from datetime import datetime
 import os
 
 # Archivo CSV para almacenar los datos del estado de ánimo
 CSV_FILE = "historial_estado_animo.csv"
 
-# Inicializar archivo CSV si no existe
+# Inicializar archivo CSV si no existe o si tiene cabecera vieja
 def inicializar_csv():
     if not os.path.exists(CSV_FILE):
         with open(CSV_FILE, "w") as file:
             file.write("Usuario,Fecha,Estado de Ánimo\n")
+    else:
+        # Si el archivo existe pero no tiene la columna Usuario, migrar datos antiguos
+        with open(CSV_FILE, "r") as file:
+            header = file.readline().strip()
+        if header == "Fecha,Estado de Ánimo":
+            df_old = pd.read_csv(CSV_FILE)
+            df_old.insert(0, "Usuario", "")
+            df_old.to_csv(CSV_FILE, index=False)
+            # Reescribir la cabecera
+            with open(CSV_FILE, "r+") as file:
+                content = file.read()
+                file.seek(0, 0)
+                file.write("Usuario,Fecha,Estado de Ánimo\n" + content.partition('\n')[2])
 
 # Guardar estado de ánimo en el archivo CSV
 def guardar_estado_animo(usuario, fecha, estado):
@@ -98,7 +110,7 @@ st.markdown("---")
 datos = cargar_datos_estado_animo()
 
 # Filtrar por usuario
-datos_usuario = datos[datos["Usuario"] == usuario] if not datos.empty else pd.DataFrame(columns=datos.columns)
+datos_usuario = datos[datos["Usuario"] == usuario] if not datos.empty and "Usuario" in datos.columns else pd.DataFrame(columns=["Fecha", "Estado de Ánimo"])
 
 st.subheader("📋 Historial de Estados de Ánimo")
 if not datos_usuario.empty:
