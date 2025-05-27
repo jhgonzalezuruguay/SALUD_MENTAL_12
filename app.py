@@ -32,7 +32,7 @@ st.title("Asistente de Salud Mental con I.A.")
 
 # Identificación de usuario
 st.sidebar.title("🧑 Identificación de Usuario")
-usuario = st.sidebar.text_input("Por favor, ingresa tu documento de identidad sin puntos ni guiones:").strip().lower()
+usuario = st.sidebar.text_input("Por favor, ingresa tu documento de identidad sin puntos ni guiones y presiona ingresar:").strip().lower()
 
 if not usuario:
     st.warning("Por favor, ingresa tu nombre o identificador en la barra lateral para continuar.")
