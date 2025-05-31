@@ -3,11 +3,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from datetime import datetime
 import os
-import csv
 import base64
 
 # ================== CONFIGURACIÓN DE ADMIN ==================
-ADMIN_USER_CODE = "16990037"  # Cambia esto por tu código personal de 8 dígitos de administrador
+ADMIN_USER_CODE = "16990037"  # Cambia esto por tu código de 8 dígitos de administrador
 ADMIN_PASSWORD = "16990037"    # Cambia esto por tu clave secreta de administrador
 
 CSV_FILE = "historial_estado_animo.csv"
@@ -18,6 +17,8 @@ def inicializar_csv():
             file.write("Usuario,Fecha,Estado de Ánimo,Comentario\n")
 
 def guardar_estado_animo(usuario, fecha, estado, comentario):
+    # Evita comas en los campos para no romper el CSV
+    comentario = (comentario or "").replace('\n', ' ').replace(',', ';')
     with open(CSV_FILE, "a", encoding="utf-8") as file:
         file.write(f"{usuario},{fecha},{estado},{comentario}\n")
 
@@ -36,7 +37,7 @@ def get_table_download_link(df, filename="datos.csv"):
     href = f'<a href="data:file/csv;base64,{b64}" download="{filename}">Descargar como CSV</a>'
     return href
 
-# Inicializar el archivo CSV
+# Inicializa el archivo CSV si no existe
 inicializar_csv()
 
 st.title("🌈 VITAL")
@@ -89,13 +90,15 @@ comentario = st.text_area("¿Quieres agregar un comentario? (Opcional)", max_cha
 
 if st.button("Registrar Estado de Ánimo"):
     fecha_actual = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    guardar_estado_animo(usuario, fecha_actual, estado_animo, comentario.replace('\n', ' '))
+    guardar_estado_animo(usuario, fecha_actual, estado_animo, comentario)
     st.success(f"¡Estado de ánimo '{estado_animo}' registrado para la fecha {fecha_actual}!")
-    st.cache_data.clear()
+    # Recarga los datos para visualizarlos de inmediato
+    st.experimental_rerun()
 
 # Historial de estados de ánimo
 st.markdown("---")
 st.subheader("📋 Historial de Estados de Ánimo")
+
 datos = cargar_datos_estado_animo()
 
 # Normaliza nombres de usuario en el DataFrame para evitar errores de filtrado
@@ -113,7 +116,7 @@ else:
 
 # Gráfico de frecuencias
 if not datos_usuario.empty:
-    st.subheader("📊 Tendencia Temporal de Estados de Ánimo")
+    st.subheader("📊 Frecuencia de Estados de Ánimo")
     resumen = datos_usuario["Estado de Ánimo"].value_counts()
     fig, ax = plt.subplots(figsize=(8, 4))
     ax.bar(resumen.index, resumen.values, color="skyblue")
@@ -171,7 +174,6 @@ if usuario == ADMIN_USER_CODE:
 # Opciones adicionales
 st.markdown("---")
 st.subheader("📅 Agendar una consulta con un profesional")
-st.write("Si deseas hablar con un profesional de salud mental, agenda una cita a continuación.")
 booking_url = "https://forms.gle/MQwofoD14ELSp4Ye7"
 st.markdown(f'<a href="{booking_url}" target="_blank"><button style="background-color: #4CAF50; color: white; padding: 10px 24px; border: none; border-radius: 4px; cursor: pointer;">AGENDAR CITA</button></a>', unsafe_allow_html=True)
 
