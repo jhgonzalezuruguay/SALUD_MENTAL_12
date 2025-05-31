@@ -15,20 +15,20 @@ CSV_FILE = "historial_estado_animo.csv"
 def inicializar_csv():
     if not os.path.exists(CSV_FILE):
         with open(CSV_FILE, "w", encoding="utf-8") as file:
-            file.write("Usuario,Fecha,Estado de Ánimo\n")
+            file.write("Usuario,Fecha,Estado de Ánimo,Comentario\n")
 
-def guardar_estado_animo(usuario, fecha, estado):
+def guardar_estado_animo(usuario, fecha, estado, comentario):
     with open(CSV_FILE, "a", encoding="utf-8") as file:
-        file.write(f"{usuario},{fecha},{estado}\n")
+        file.write(f"{usuario},{fecha},{estado},{comentario}\n")
 
 def cargar_datos_estado_animo():
     if os.path.exists(CSV_FILE):
         try:
             return pd.read_csv(CSV_FILE, dtype=str)
         except Exception:
-            return pd.DataFrame(columns=["Usuario", "Fecha", "Estado de Ánimo"])
+            return pd.DataFrame(columns=["Usuario", "Fecha", "Estado de Ánimo", "Comentario"])
     else:
-        return pd.DataFrame(columns=["Usuario", "Fecha", "Estado de Ánimo"])
+        return pd.DataFrame(columns=["Usuario", "Fecha", "Estado de Ánimo", "Comentario"])
 
 def get_table_download_link(df, filename="datos.csv"):
     csv_str = df.to_csv(index=False, encoding='utf-8')
@@ -47,7 +47,7 @@ st.sidebar.title("🧑 Identificación de Usuario")
 usuario = st.sidebar.text_input("Por favor, ingresa tu documento de identidad sin puntos ni guiones y presiona ingresar:").strip().lower()
 
 if not usuario:
-    st.warning("Por favor, ingresa tu código dentificador en la barra lateral para continuar (Documento de Identidad).")
+    st.warning("Por favor, ingresa tu código identificador en la barra lateral para continuar (Documento de Identidad).")
     st.stop()
 
 # Chat
@@ -85,10 +85,11 @@ estado_animo = st.selectbox(
         "Corazón roto 💔"
     ]
 )
+comentario = st.text_area("¿Quieres agregar un comentario? (Opcional)", max_chars=500)
 
 if st.button("Registrar Estado de Ánimo"):
-    fecha_actual = datetime.now().strftime("%Y-%m-%d")
-    guardar_estado_animo(usuario, fecha_actual, estado_animo)
+    fecha_actual = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    guardar_estado_animo(usuario, fecha_actual, estado_animo, comentario.replace('\n', ' '))
     st.success(f"¡Estado de ánimo '{estado_animo}' registrado para la fecha {fecha_actual}!")
     st.cache_data.clear()
 
@@ -102,11 +103,11 @@ if not datos.empty:
     datos["Usuario"] = datos["Usuario"].astype(str).str.strip().str.lower()
     datos_usuario = datos[datos["Usuario"] == usuario]
 else:
-    datos_usuario = pd.DataFrame(columns=["Fecha", "Estado de Ánimo"])
+    datos_usuario = pd.DataFrame(columns=["Fecha", "Estado de Ánimo", "Comentario"])
 
 if not datos_usuario.empty:
-    st.write(datos_usuario[["Fecha", "Estado de Ánimo"]])
-    #st.info("Solo el administrador puede descargar el historial en CSV.")
+    st.write(datos_usuario[["Fecha", "Estado de Ánimo", "Comentario"]])
+    st.info("Solo el administrador puede descargar el historial en CSV.")
 else:
     st.info("No hay datos registrados aún para este usuario.")
 
