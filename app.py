@@ -3,6 +3,12 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from datetime import datetime
 import os
+import csv
+import base64
+
+# ================== CONFIGURACIÓN DE ADMIN ==================
+ADMIN_USER_CODE = "9999999"  # Cambia esto por tu código personal de 7 dígitos de administrador
+ADMIN_PASSWORD = "123456"    # Cambia esto por tu clave secreta de administrador
 
 CSV_FILE = "historial_estado_animo.csv"
 
@@ -23,6 +29,12 @@ def cargar_datos_estado_animo():
             return pd.DataFrame(columns=["Usuario", "Fecha", "Estado de Ánimo"])
     else:
         return pd.DataFrame(columns=["Usuario", "Fecha", "Estado de Ánimo"])
+
+def get_table_download_link(df, filename="datos.csv"):
+    csv_str = df.to_csv(index=False, encoding='utf-8')
+    b64 = base64.b64encode(csv_str.encode()).decode()
+    href = f'<a href="data:file/csv;base64,{b64}" download="{filename}">Descargar como CSV</a>'
+    return href
 
 # Inicializar el archivo CSV
 inicializar_csv()
@@ -78,7 +90,6 @@ if st.button("Registrar Estado de Ánimo"):
     fecha_actual = datetime.now().strftime("%Y-%m-%d")
     guardar_estado_animo(usuario, fecha_actual, estado_animo)
     st.success(f"¡Estado de ánimo '{estado_animo}' registrado para la fecha {fecha_actual}!")
-    # Limpiar el caché de datos para mostrar el registro actualizado
     st.cache_data.clear()
 
 # Historial de estados de ánimo
@@ -95,6 +106,7 @@ else:
 
 if not datos_usuario.empty:
     st.write(datos_usuario[["Fecha", "Estado de Ánimo"]])
+    st.info("Solo el administrador puede descargar el historial en CSV.")
 else:
     st.info("No hay datos registrados aún para este usuario.")
 
@@ -109,6 +121,51 @@ if not datos_usuario.empty:
     ax.set_ylabel("Frecuencia")
     plt.xticks(rotation=45, ha="right")
     st.pyplot(fig)
+
+# =========== ACCESO ADMINISTRATIVO (SOLO VISIBLE A ADMIN) =========
+if usuario == ADMIN_USER_CODE:
+    st.markdown("---")
+    st.subheader("🔑 Acceso administrativo (descarga de datos)")
+
+    if "admin_ok" not in st.session_state:
+        st.session_state.admin_ok = False
+
+    if not st.session_state.admin_ok:
+        admin_code = st.text_input("Código de administrador:", type="password")
+        if st.button("Ingresar como administrador"):
+            if admin_code == ADMIN_PASSWORD:
+                st.session_state.admin_ok = True
+                st.success("Acceso concedido. Puedes descargar los historiales.")
+            else:
+                st.error("Código incorrecto.")
+    else:
+        st.success("🟢 Acceso de administrador activo.")
+
+        # Listado de códigos únicos de usuario
+        st.markdown("#### Códigos de usuario registrados")
+        codigos_unicos = sorted(datos["Usuario"].unique())
+        st.write("Códigos únicos registrados:")
+        st.code('\n'.join(codigos_unicos), language="text")
+
+        # Descarga historial individual de cualquier usuario
+        st.markdown("#### Descargar historial individual de usuario")
+        buscar_codigo = st.text_input("Código identificador de usuario para descargar historial:", max_chars=50, key="descarga_individual")
+        if buscar_codigo:
+            buscar_codigo = buscar_codigo.strip().lower()
+            df_usuario = datos[datos["Usuario"] == buscar_codigo]
+            if not df_usuario.empty:
+                st.dataframe(df_usuario)
+                st.markdown(get_table_download_link(df_usuario, filename=f"estado_animo_{buscar_codigo}.csv"), unsafe_allow_html=True)
+            else:
+                st.info("No hay datos para ese código de usuario.")
+
+        # Descarga historial grupal de todos los usuarios
+        st.markdown("#### Descargar historial grupal/completo")
+        if not datos.empty:
+            st.dataframe(datos)
+            st.markdown(get_table_download_link(datos, filename="estado_animo_completo.csv"), unsafe_allow_html=True)
+        else:
+            st.info("No hay ingresos registrados aún.")
 
 # Opciones adicionales
 st.markdown("---")
