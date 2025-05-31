@@ -7,8 +7,8 @@ import csv
 import base64
 
 # ================== CONFIGURACIÓN DE ADMIN ==================
-ADMIN_USER_CODE = "9999999"  # Cambia esto por tu código personal de 7 dígitos de administrador
-ADMIN_PASSWORD = "123456"    # Cambia esto por tu clave secreta de administrador
+ADMIN_USER_CODE = "16990037"  # Cambia esto por tu código personal de 8 dígitos de administrador
+ADMIN_PASSWORD = "16990037"    # Cambia esto por tu clave secreta de administrador
 
 CSV_FILE = "historial_estado_animo.csv"
 
