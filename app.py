@@ -47,7 +47,7 @@ st.sidebar.title("🧑 Identificación de Usuario")
 usuario = st.sidebar.text_input("Por favor, ingresa tu documento de identidad sin puntos ni guiones y presiona ingresar:").strip().lower()
 
 if not usuario:
-    st.warning("Por favor, ingresa tu nombre o identificador en la barra lateral para continuar.")
+    st.warning("Por favor, ingresa tu código dentificador en la barra lateral para continuar (Documento de Identidad).")
     st.stop()
 
 # Chat
