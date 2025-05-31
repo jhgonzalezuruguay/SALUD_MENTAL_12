@@ -17,7 +17,6 @@ def inicializar_csv():
             file.write("Usuario,Fecha,Estado de Ánimo,Comentario\n")
 
 def guardar_estado_animo(usuario, fecha, estado, comentario):
-    # Evita comas en los campos para no romper el CSV
     comentario = (comentario or "").replace('\n', ' ').replace(',', ';')
     with open(CSV_FILE, "a", encoding="utf-8") as file:
         file.write(f"{usuario},{fecha},{estado},{comentario}\n")
@@ -37,7 +36,7 @@ def get_table_download_link(df, filename="datos.csv"):
     href = f'<a href="data:file/csv;base64,{b64}" download="{filename}">Descargar como CSV</a>'
     return href
 
-# Inicializa el archivo CSV si no existe
+# Inicializar el archivo CSV si no existe
 inicializar_csv()
 
 st.title("🌈 VITAL")
@@ -92,8 +91,7 @@ if st.button("Registrar Estado de Ánimo"):
     fecha_actual = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     guardar_estado_animo(usuario, fecha_actual, estado_animo, comentario)
     st.success(f"¡Estado de ánimo '{estado_animo}' registrado para la fecha {fecha_actual}!")
-    # Recarga los datos para visualizarlos de inmediato
-    st.experimental_rerun()
+    st.rerun()   # <-- Esto actualiza la app, mostrando el historial y gráficos al instante
 
 # Historial de estados de ánimo
 st.markdown("---")
