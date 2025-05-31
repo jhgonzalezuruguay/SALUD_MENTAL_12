@@ -106,7 +106,7 @@ else:
 
 if not datos_usuario.empty:
     st.write(datos_usuario[["Fecha", "Estado de Ánimo"]])
-    st.info("Solo el administrador puede descargar el historial en CSV.")
+    #st.info("Solo el administrador puede descargar el historial en CSV.")
 else:
     st.info("No hay datos registrados aún para este usuario.")
 
