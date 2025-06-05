@@ -39,7 +39,7 @@ def get_table_download_link(df, filename="datos.csv"):
 
 # ========== AUTENTICACIÓN ==========
 def mostrar_login():
-    st.title("🔒 Ingreso a Salud Mental 2.0")
+    st.title("🔒 Seguimiento del Estado de Ánimo")
     tabs = st.tabs(["Iniciar sesión", "Registrarse"])
     with tabs[0]:
         username = st.text_input("Usuario", key="login_user")
@@ -48,7 +48,7 @@ def mostrar_login():
             user = get_user(username)
             if user and user["password"] == hash_password(password):
                 st.session_state["user"] = user
-                st.success("¡Bienvenido/a!")
+                st.success("¡Bienvenido. Oprime Ingresar")
                 st.session_state["do_rerun"] = True
             else:
                 st.error("Usuario o contraseña incorrectos.")
