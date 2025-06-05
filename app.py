@@ -2,33 +2,34 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 from datetime import datetime
-import os
+import hashlib
 import base64
 
-# ================== CONFIGURACIÓN DE ADMIN ==================
-ADMIN_USER_CODE = "16990037"  # Cambia esto por tu código de 8 dígitos de administrador
-ADMIN_PASSWORD = "16990037"    # Cambia esto por tu clave secreta de administrador
+# ========== CONFIGURACIÓN DE USUARIOS Y SESIÓN ==========
+if "usuarios" not in st.session_state:
+    st.session_state["usuarios"] = [
+        {"username": "admin", "password": hashlib.sha256("admin123".encode()).hexdigest(), "rol": "admin"}
+    ]
+if "user" not in st.session_state:
+    st.session_state["user"] = None
+if "estado_animo_data" not in st.session_state:
+    st.session_state["estado_animo_data"] = []
+if "reset_form" not in st.session_state:
+    st.session_state["reset_form"] = False
+if "do_rerun" not in st.session_state:
+    st.session_state["do_rerun"] = False
 
-CSV_FILE = "historial_estado_animo.csv"
+# ========== CONTROL DE RERUN ==========
+if st.session_state["do_rerun"]:
+    st.session_state["do_rerun"] = False
+    st.rerun()
 
-def inicializar_csv():
-    if not os.path.exists(CSV_FILE):
-        with open(CSV_FILE, "w", encoding="utf-8") as file:
-            file.write("Usuario,Fecha,Estado de Ánimo,Comentario\n")
+# ========== FUNCIONES AUXILIARES ==========
+def hash_password(password):
+    return hashlib.sha256(password.encode()).hexdigest()
 
-def guardar_estado_animo(usuario, fecha, estado, comentario):
-    comentario = (comentario or "").replace('\n', ' ').replace(',', ';')
-    with open(CSV_FILE, "a", encoding="utf-8") as file:
-        file.write(f"{usuario},{fecha},{estado},{comentario}\n")
-
-def cargar_datos_estado_animo():
-    if os.path.exists(CSV_FILE):
-        try:
-            return pd.read_csv(CSV_FILE, dtype=str)
-        except Exception:
-            return pd.DataFrame(columns=["Usuario", "Fecha", "Estado de Ánimo", "Comentario"])
-    else:
-        return pd.DataFrame(columns=["Usuario", "Fecha", "Estado de Ánimo", "Comentario"])
+def get_user(username):
+    return next((u for u in st.session_state["usuarios"] if u["username"] == username), None)
 
 def get_table_download_link(df, filename="datos.csv"):
     csv_str = df.to_csv(index=False, encoding='utf-8')
@@ -36,21 +37,50 @@ def get_table_download_link(df, filename="datos.csv"):
     href = f'<a href="data:file/csv;base64,{b64}" download="{filename}">Descargar como CSV</a>'
     return href
 
-# Inicializar el archivo CSV si no existe
-inicializar_csv()
+# ========== AUTENTICACIÓN ==========
+def mostrar_login():
+    st.title("🔒 Ingreso a Salud Mental 2.0")
+    tabs = st.tabs(["Iniciar sesión", "Registrarse"])
+    with tabs[0]:
+        username = st.text_input("Usuario", key="login_user")
+        password = st.text_input("Contraseña", type="password", key="login_pass")
+        if st.button("Ingresar"):
+            user = get_user(username)
+            if user and user["password"] == hash_password(password):
+                st.session_state["user"] = user
+                st.success("¡Bienvenido/a!")
+                st.session_state["do_rerun"] = True
+            else:
+                st.error("Usuario o contraseña incorrectos.")
+    with tabs[1]:
+        username = st.text_input("Nuevo usuario", key="reg_user")
+        password = st.text_input("Nueva contraseña", type="password", key="reg_pass")
+        if st.button("Registrarse"):
+            if not username or not password:
+                st.warning("Completa todos los campos.")
+            elif get_user(username):
+                st.warning("El nombre de usuario ya existe.")
+            else:
+                st.session_state["usuarios"].append({
+                    "username": username,
+                    "password": hash_password(password),
+                    "rol": "usuario"
+                })
+                st.success("Usuario registrado. Ahora puedes iniciar sesión.")
+                st.session_state["do_rerun"] = True
+
+# ========== BLOQUE DE AUTENTICACIÓN ==========
+if not st.session_state["user"]:
+    mostrar_login()
+    st.stop()
+
+user = st.session_state["user"]
+es_admin = user["rol"] == "admin"
 
 st.title("🌈 VITAL")
 st.title("Asistente de Salud Mental con I.A.")
 
-# Identificación de usuario
-st.sidebar.title("🧑 Identificación de Usuario")
-usuario = st.sidebar.text_input("Por favor, ingresa tu documento de identidad sin puntos ni guiones y presiona ingresar:").strip().lower()
-
-if not usuario:
-    st.warning("Por favor, ingresa tu código identificador en la barra lateral para continuar (Documento de Identidad).")
-    st.stop()
-
-# Chat
+# ========== CHAT DE ASISTENCIA ==========
 st.sidebar.title("🤖 Chat de Asistencia")
 if "messages" not in st.session_state:
     st.session_state.messages = [
@@ -70,52 +100,72 @@ if prompt := st.sidebar.chat_input("Cuéntame cómo te sientes..."):
             st.markdown(response)
     st.session_state.messages.append({"role": "assistant", "content": response})
 
-# Registro de estado de ánimo
+# ========== REGISTRO DE ESTADO DE ÁNIMO ==========
 st.markdown("---")
 st.subheader("📊 Seguimiento del Estado de Ánimo")
 st.write("Registra tu estado de ánimo cada vez que sientas un cambio del mismo o cuando consideres necesario registrarlo, para así llevar un seguimiento de cómo te sientes a lo largo del tiempo.")
 
+estados_opciones = [
+    "Feliz 😀", "Triste 😢", "Ansioso 😰", "Relajado 😌", "Enojado 😡",
+    "Fiesta 🥳", "Enamorado 😍", "Cool 😎", "Asombrado 🤩", "Arcoíris 🌈",
+    "Neutral 😐", "Pensativo 🤔", "Tristeza leve 😔", "Miedo 😱",
+    "Agotado 😩", "Meditación 🧘", "Idea 💡", "Energía ⚡", "Confuso 🌪️",
+    "Corazón roto 💔"
+]
+
+if st.session_state.reset_form:
+    estado_default = estados_opciones[0]
+    comentario_default = ""
+    st.session_state.reset_form = False
+else:
+    estado_default = estados_opciones[0]
+    comentario_default = ""
+
 estado_animo = st.selectbox(
     "¿Cómo te sientes hoy?",
-    [
-        "Feliz 😀", "Triste 😢", "Ansioso 😰", "Relajado 😌", "Enojado 😡",
-        "Fiesta 🥳", "Enamorado 😍", "Cool 😎", "Asombrado 🤩", "Arcoíris 🌈",
-        "Neutral 😐", "Pensativo 🤔", "Tristeza leve 😔", "Miedo 😱",
-        "Agotado 😩", "Meditación 🧘", "Idea 💡", "Energía ⚡", "Confuso 🌪️",
-        "Corazón roto 💔"
-    ]
+    estados_opciones,
+    index=estados_opciones.index(estado_default),
+    key="estado"
 )
-comentario = st.text_area("¿Quieres agregar un comentario? (Opcional)", max_chars=500)
+comentario = st.text_area("¿Quieres agregar un comentario? (Opcional)", max_chars=500, key="comentario", value=comentario_default)
 
 if st.button("Registrar Estado de Ánimo"):
     fecha_actual = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    guardar_estado_animo(usuario, fecha_actual, estado_animo, comentario)
+    entry = {
+        "Usuario": user["username"],
+        "Fecha": fecha_actual,
+        "Estado de Ánimo": estado_animo,
+        "Comentario": (comentario or "").replace('\n', ' ').replace(',', ';')
+    }
+    st.session_state["estado_animo_data"].append(entry)
     st.success(f"¡Estado de ánimo '{estado_animo}' registrado para la fecha {fecha_actual}!")
-    st.rerun()   # <-- Esto actualiza la app, mostrando el historial y gráficos al instante
+    st.session_state.reset_form = True
+    st.rerun()
 
-# Historial de estados de ánimo
+# ========== HISTORIAL DE ESTADOS DE ÁNIMO ==========
 st.markdown("---")
 st.subheader("📋 Historial de Estados de Ánimo")
 
-datos = cargar_datos_estado_animo()
-
-# Normaliza nombres de usuario en el DataFrame para evitar errores de filtrado
-if not datos.empty:
-    datos["Usuario"] = datos["Usuario"].astype(str).str.strip().str.lower()
-    datos_usuario = datos[datos["Usuario"] == usuario]
+df = pd.DataFrame(st.session_state["estado_animo_data"])
+if not df.empty:
+    if es_admin:
+        datos_vista = df
+    else:
+        datos_vista = df[df["Usuario"] == user["username"]]
 else:
-    datos_usuario = pd.DataFrame(columns=["Fecha", "Estado de Ánimo", "Comentario"])
+    datos_vista = pd.DataFrame(columns=["Fecha", "Estado de Ánimo", "Comentario"])
 
-if not datos_usuario.empty:
-    st.write(datos_usuario[["Fecha", "Estado de Ánimo", "Comentario"]])
-    #st.info("Solo el administrador puede descargar el historial en CSV.")
+if not datos_vista.empty:
+    st.write(datos_vista[["Fecha", "Estado de Ánimo", "Comentario"]])
+    if not es_admin:
+        st.info("Solo el administrador puede descargar el historial en CSV.")
 else:
     st.info("No hay datos registrados aún para este usuario.")
 
-# Gráfico de frecuencias
-if not datos_usuario.empty:
+# ========== GRÁFICO DE FRECUENCIAS ==========
+if not datos_vista.empty:
     st.subheader("📊 Frecuencia de Estados de Ánimo")
-    resumen = datos_usuario["Estado de Ánimo"].value_counts()
+    resumen = datos_vista["Estado de Ánimo"].value_counts()
     fig, ax = plt.subplots(figsize=(8, 4))
     ax.bar(resumen.index, resumen.values, color="skyblue")
     ax.set_title("Frecuencia de Estados de Ánimo")
@@ -124,52 +174,42 @@ if not datos_usuario.empty:
     plt.xticks(rotation=45, ha="right")
     st.pyplot(fig)
 
-# =========== ACCESO ADMINISTRATIVO (SOLO VISIBLE A ADMIN) =========
-if usuario == ADMIN_USER_CODE:
+# ========== ACCESO ADMINISTRATIVO (SOLO ADMIN PUEDE DESCARGAR) ==========
+if es_admin:
     st.markdown("---")
     st.subheader("🔑 Acceso administrativo (descarga de datos)")
-
-    if "admin_ok" not in st.session_state:
-        st.session_state.admin_ok = False
-
-    if not st.session_state.admin_ok:
-        admin_code = st.text_input("Código de administrador:", type="password")
-        if st.button("Ingresar como administrador"):
-            if admin_code == ADMIN_PASSWORD:
-                st.session_state.admin_ok = True
-                st.success("Acceso concedido. Puedes descargar los historiales.")
-            else:
-                st.error("Código incorrecto.")
-    else:
-        st.success("🟢 Acceso de administrador activo.")
-
-        # Listado de códigos únicos de usuario
-        st.markdown("#### Códigos de usuario registrados")
-        codigos_unicos = sorted(datos["Usuario"].unique())
-        st.write("Códigos únicos registrados:")
-        st.code('\n'.join(codigos_unicos), language="text")
+    if not df.empty:
+        # Listado de usuarios únicos
+        st.markdown("#### Usuarios registrados")
+        usuarios_unicos = sorted(df["Usuario"].unique())
+        st.write("Usuarios registrados:")
+        st.code('\n'.join(usuarios_unicos), language="text")
 
         # Descarga historial individual de cualquier usuario
         st.markdown("#### Descargar historial individual de usuario")
-        buscar_codigo = st.text_input("Código identificador de usuario para descargar historial:", max_chars=50, key="descarga_individual")
-        if buscar_codigo:
-            buscar_codigo = buscar_codigo.strip().lower()
-            df_usuario = datos[datos["Usuario"] == buscar_codigo]
+        buscar_usuario = st.text_input("Nombre de usuario para descargar historial:", key="descarga_individual")
+        if buscar_usuario:
+            buscar_usuario = buscar_usuario.strip()
+            df_usuario = df[df["Usuario"] == buscar_usuario]
             if not df_usuario.empty:
                 st.dataframe(df_usuario)
-                st.markdown(get_table_download_link(df_usuario, filename=f"estado_animo_{buscar_codigo}.csv"), unsafe_allow_html=True)
+                st.markdown(get_table_download_link(df_usuario, filename=f"estado_animo_{buscar_usuario}.csv"), unsafe_allow_html=True)
             else:
-                st.info("No hay datos para ese código de usuario.")
+                st.info("No hay datos para ese usuario.")
 
         # Descarga historial grupal de todos los usuarios
         st.markdown("#### Descargar historial grupal/completo")
-        if not datos.empty:
-            st.dataframe(datos)
-            st.markdown(get_table_download_link(datos, filename="estado_animo_completo.csv"), unsafe_allow_html=True)
-        else:
-            st.info("No hay ingresos registrados aún.")
+        st.dataframe(df)
+        st.markdown(get_table_download_link(df, filename="estado_animo_completo.csv"), unsafe_allow_html=True)
+    else:
+        st.info("No hay ingresos registrados aún.")
 
-# Opciones adicionales
+# ========== CIERRE DE SESIÓN ==========
+if st.button("Cerrar sesión"):
+    st.session_state["user"] = None
+    st.session_state["do_rerun"] = True
+
+# ========== OPCIONES ADICIONALES Y FOOTER ==========
 st.markdown("---")
 st.subheader("📅 Agendar una consulta con un profesional")
 booking_url = "https://forms.gle/MQwofoD14ELSp4Ye7"
