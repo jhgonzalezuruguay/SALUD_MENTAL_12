@@ -8,7 +8,8 @@ import base64
 # ========== CONFIGURACIÓN DE USUARIOS Y SESIÓN ==========
 if "usuarios" not in st.session_state:
     st.session_state["usuarios"] = [
-        {"username": "admin", "password": hashlib.sha256("admin123".encode()).hexdigest(), "rol": "admin"}
+        {"username": "admin", "password": hashlib.sha256("admin123".encode()).hexdigest(), "rol": "admin",
+         "nombre": "Admin", "apellido": "Admin", "telefono": "", "email": ""}
     ]
 if "user" not in st.session_state:
     st.session_state["user"] = None
@@ -53,10 +54,15 @@ def mostrar_login():
             else:
                 st.error("Usuario o contraseña incorrectos.")
     with tabs[1]:
+        st.write("Completa todos los campos para registrarte:")
         username = st.text_input("Nuevo usuario", key="reg_user")
         password = st.text_input("Nueva contraseña", type="password", key="reg_pass")
+        nombre = st.text_input("Nombre", key="reg_nombre")
+        apellido = st.text_input("Apellido", key="reg_apellido")
+        telefono = st.text_input("Teléfono móvil", key="reg_telefono")
+        email = st.text_input("Email", key="reg_email")
         if st.button("Registrarse"):
-            if not username or not password:
+            if not (username and password and nombre and apellido and telefono and email):
                 st.warning("Completa todos los campos.")
             elif get_user(username):
                 st.warning("El nombre de usuario ya existe.")
@@ -64,7 +70,11 @@ def mostrar_login():
                 st.session_state["usuarios"].append({
                     "username": username,
                     "password": hash_password(password),
-                    "rol": "usuario"
+                    "rol": "usuario",
+                    "nombre": nombre,
+                    "apellido": apellido,
+                    "telefono": telefono,
+                    "email": email
                 })
                 st.success("Usuario registrado. Ahora puedes iniciar sesión.")
                 st.session_state["do_rerun"] = True
