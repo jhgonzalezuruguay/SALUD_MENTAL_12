@@ -226,7 +226,7 @@ booking_url = "https://forms.gle/MQwofoD14ELSp4Ye7"
 st.markdown(f'<a href="{booking_url}" target="_blank"><button style="background-color: #4CAF50; color: white; padding: 10px 24px; border: none; border-radius: 4px; cursor: pointer;">AGENDAR CITA</button></a>', unsafe_allow_html=True)
 
 st.markdown("---")
-st.subheader("📋 Registro de Usuario")
+st.subheader("📋 Registro Administrativo de Usuario")
 st.write('Ingresa tus datos a nuestro "Registro Administrativo de Usuario" para mantenerte informado, ofrecerte un acompañamiento más personalizado, guardar tu historial emocional de forma segura y conectarte con profesionales cuando lo necesites. Tu bienestar es único, y tu seguimiento también debe serlo.')
 registro_url = "https://forms.gle/ZsM2xrWyUUU9ak6z7"
 st.markdown(f'<a href="{registro_url}" target="_blank"><button style="background-color: #4CAF50; color: white; padding: 10px 24px; border: none; border-radius: 4px; cursor: pointer;">REGISTRARSE</button></a>', unsafe_allow_html=True)
