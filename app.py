@@ -9,7 +9,7 @@ import base64
 st.markdown("---")
 st.subheader("💬 Agendar sesión gratis por WhatsApp")
 #st.write("Si deseas enviar un mensaje por WhatsApp, haz clic en el siguiente botón:")
-whatsapp_url = "https://wa.me/59897304859?text=Hola,%20necesito%20ayuda%20con%20mi%20salud%20mental."
+whatsapp_url = "https://wa.me/59897304859?text=Hola,%20quiero%20agendar%20cita%20con%20un%20psicólogo."
 st.markdown(f'<a href="{whatsapp_url}" target="_blank"><button style="background-color: #25D366; color: white; padding: 10px 24px; border: none; border-radius: 4px; cursor: pointer;">Enviar Mensaje</button></a>', unsafe_allow_html=True)
 
 # Footer
